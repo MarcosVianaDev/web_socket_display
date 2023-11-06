@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&gt;&gt;{{user_name}}</title>
+    <style>
+        .container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .container > div *{
+            font-size: 32px;
+        }
+        .container > div {
+            display: flex;
+            flex-direction: column;
+        }
+        iframe {
+            width: 50vw;
+            height: 50vh;
+        }
+
+        #tempo_segundos {
+            width: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <iframe src="../logar.html" frameborder="1"></iframe>
+        <div>
+            <label>
+                <span>Texto :</span>
+                <input type="text" id="texto">
+            </label>
+            <label>
+                <span>cor da fonte: </span>
+                <input type="color" id="cor_fonte">
+            </label>
+            <label>
+                <span>cor do fundo: </span>
+                <input type="color" id="cor_fundo">
+            </label>
+            <label>
+                <span>Animação: </span>
+                <select id="anim">
+                    <option value="slide" selected>slide</option>
+                </select>
+            </label>
+            <label>
+                <span>tempo (segundos): </span>
+                <input type="number" id="tempo_segundos" min="1" max="60">
+            </label>
+            <div>
+
+                <button type="button">Cancelar</button>
+                <button type="button">Salvar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var ws = null;
+            const container = document.getElementById('container')
+            <!-- ws = new WebSocket(`ws://${window.location.host}/ws`) -->
+            ws = new WebSocket(`ws://127.0.0.1:8000/ws`)
+
+            ws.onmessage = function ( { data } = event) {
+                data = JSON.parse(data)
+                texto.value = data.texto
+                document.getElementById('cor_fonte').value = data.cor_fonte
+                document.getElementById('cor_fundo').value = data.cor_fundo
+                tempo_segundos.value = data.tempo_segundos
+                console.log(data)
+            }
+        })
+    </script>
+</body>
+</html>

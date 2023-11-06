@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&lt;&lt; {{user_name}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #container {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: monospace;
+            text-wrap: nowrap;
+            line-height: 100vh;
+            font-size: 90vh;
+            width: fit-content;
+            text-transform: uppercase;
+            animation: slide {{tempo_segundos}}s linear infinite;
+        }
+
+        @keyframes slide {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <!-- Dado carregado pelo websocket -->
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var ws = null;
+            const container = document.getElementById('container')
+            <!-- ws = new WebSocket(`ws://${window.location.host}/ws`) -->
+            ws = new WebSocket(`ws://127.0.0.1:8000/ws`)
+
+            ws.onmessage = function ( { data } = event) {
+                data = JSON.parse(data)
+                var h1 = document.createElement('h1')
+                h1.innerHTML = data.texto
+                h1.style.color = data.cor_fonte
+                container.style.backgroundColor = data.cor_fundo
+                container.appendChild(h1)
+            }
+        })
+    </script>
+</body>
+
+</html>
