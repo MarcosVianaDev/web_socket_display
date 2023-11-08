@@ -14,8 +14,6 @@ class Config(BaseModel):
     cor_fundo: str = '#cccccc'
     anim: str = 'slide'
     tempo_segundos: str = '10'
-    
-config_default = Config().model_dump()
 
 websocket_list = Manager()
 
