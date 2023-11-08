@@ -1,7 +1,7 @@
 from typing import Annotated
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Path, Query, Body, status #Path e Query ajudam a documentação e validação automática
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, status #Path e Query ajudam a documentação e validação automática
 from pydantic import BaseModel
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 
 from fastapi.middleware.cors import CORSMiddleware
 
