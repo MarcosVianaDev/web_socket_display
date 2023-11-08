@@ -40,22 +40,21 @@ def root():
 
 @app.get('/criar/{user_name}')
 def edit(user_name: str):
-    # websocket_list.broadcast(config)
-    return HTMLResponse(content=Render('criar.html', {'user_name':user_name}), status_code=200)
+    return HTMLResponse(content=Render('criar.html', {'user_name':user_name.lower()}), status_code=200)
 
 @app.get('/logar/{user_name}')
 def logar(user_name: str):
-    return HTMLResponse(content=Render('logar.html', {'user_name':user_name}), status_code=200)
+    return HTMLResponse(content=Render('logar.html', {'user_name':user_name.lower()}), status_code=200)
 
 @app.websocket("/ws/{user_name}")
 async def websocket_endpoint(websocket: WebSocket, user_name: str):
-    await websocket_list.connect(websocket, user_name)
+    await websocket_list.connect(websocket, user_name.lower())
     try:
         while True:
             data:Config = await websocket.receive_json()
-            await websocket_list.broadcast(data, user_name)
+            await websocket_list.broadcast(data, user_name.lower())
     except WebSocketDisconnect:
-        websocket_list.disconnect(websocket, user_name)
+        websocket_list.disconnect(websocket, user_name.lower())
 
 if __name__ == '__main__':
     import uvicorn
