@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +12,16 @@
             align-items: center;
             gap: 16px;
         }
-        .container > div *{
+
+        .container>div * {
             font-size: 32px;
         }
-        .container > div {
+
+        .container>div {
             display: flex;
             flex-direction: column;
         }
+
         iframe {
             width: 50vw;
             height: 50vh;
@@ -28,13 +32,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <iframe src="../logar.html" frameborder="1"></iframe>
+        <iframe src='/logar/{{user_name}}' frameborder="1"></iframe>
         <div>
             <label>
                 <span>Texto :</span>
-                <input type="text" id="texto">
+                <input type="text" id="texto" value="Digite seu texto aqui">
             </label>
             <label>
                 <span>cor da fonte: </span>
@@ -42,7 +47,7 @@
             </label>
             <label>
                 <span>cor do fundo: </span>
-                <input type="color" id="cor_fundo">
+                <input type="color" id="cor_fundo" value="#ffffff">
             </label>
             <label>
                 <span>Animação: </span>
@@ -52,31 +57,42 @@
             </label>
             <label>
                 <span>tempo (segundos): </span>
-                <input type="number" id="tempo_segundos" min="1" max="60">
+                <input type="number" id="tempo_segundos" min="1" max="60" value="10">
             </label>
             <div>
 
-                <button type="button">Cancelar</button>
-                <button type="button">Salvar</button>
+                <button type="button">Resetar</button>
+                <button type="button" id="btn_salvar_config">Salvar</button>
             </div>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             var ws = null;
-            const container = document.getElementById('container')
-            <!-- ws = new WebSocket(`ws://${window.location.host}/ws`) -->
-            ws = new WebSocket(`ws://127.0.0.1:8000/ws`)
+            document.getElementById('btn_salvar_config').addEventListener('click', sendConfig)
 
-            ws.onmessage = function ( { data } = event) {
-                data = JSON.parse(data)
-                texto.value = data.texto
-                document.getElementById('cor_fonte').value = data.cor_fonte
-                document.getElementById('cor_fundo').value = data.cor_fundo
-                tempo_segundos.value = data.tempo_segundos
-                console.log(data)
+            const texto = document.getElementById("texto")
+            const cor_fonte = document.getElementById('cor_fonte')
+            const cor_fundo = document.getElementById('cor_fundo')
+            const anim = document.getElementById('anim')
+            const tempo_segundos = document.getElementById('tempo_segundos')
+
+            // <!-- ws = new WebSocket(`ws://${window.location.host}/ws/` + {{user_name}}) -->
+            ws = new WebSocket(`ws://127.0.0.1:8000/ws/222`)
+            
+            function sendConfig() {
+                data_send = {
+                    "texto":texto.value,
+                    "cor_fonte": cor_fonte.value,
+                    "cor_fundo": cor_fundo.value,
+                    "anim": anim.value,
+                    "tempo_segundos": tempo_segundos.value,
+                }
+                console.log(JSON.stringify(data_send))
+                ws.send(JSON.stringify(data_send))
             }
         })
     </script>
 </body>
+
 </html>

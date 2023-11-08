@@ -1,8 +1,10 @@
 from typing import Annotated
-from fastapi import FastAPI, WebSocket, Path, Query, Body, status #Path e Query ajudam a documentação e validação automática
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Path, Query, Body, status #Path e Query ajudam a documentação e validação automática
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, JSONResponse
-from templatesRender import Render
+
+from utils.templatesRender import Render
+from utils.ConnectionManager import Manager
 
 
 class User(BaseModel):
@@ -21,12 +23,12 @@ users = {}
 
 config_default = Config().model_dump()
 
+websocket_list = Manager()
 
 app = FastAPI()
 
-
 @app.get("/", response_class=HTMLResponse)
-async def root():
+def root():
     return HTMLResponse(content=Render('index.html'), status_code=200)
 
 @app.post('/criar')
@@ -34,24 +36,28 @@ def criar(user: User):
     new_config = Config()
     new_config.user_pass = user.user_pass
     users[user.user_name] = new_config.model_dump()
-    print(users)
     return JSONResponse(content=f'user {user.user_name} created', status_code=status.HTTP_201_CREATED)
 
 
 @app.get('/logar/{user_name}/edit')
 def edit(user_name: str):
+    # websocket_list.broadcast(config)
     return HTMLResponse(content=Render('criar.html', {'user_name':user_name}), status_code=200)
 
 @app.get('/logar/{user_name}')
 def logar(user_name: str):
     return HTMLResponse(content=Render('logar.html', {'user_name':user_name, 'tempo_segundos': config_default.get('tempo_segundos')}), status_code=200)
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    # print(config_default)
-    print(id(websocket))
-    await websocket.send_json(config_default)
+@app.websocket("/ws/{user_name}")
+async def websocket_endpoint(websocket: WebSocket, user_name: str):
+    await websocket_list.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            print(f'Dados recebidos pelo WS: {data}')
+            await websocket_list.broadcast(data)
+    except WebSocketDisconnect:
+        websocket_list.disconnect(websocket)
 
 if __name__ == '__main__':
     import uvicorn
