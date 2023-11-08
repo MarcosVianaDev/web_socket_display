@@ -61,7 +61,7 @@
             </label>
             <div>
 
-                <button type="button">Resetar</button>
+                <button type="button" id="btn_reset_config">Resetar</button>
                 <button type="button" id="btn_salvar_config">Salvar</button>
             </div>
         </div>
@@ -69,13 +69,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             var ws = null;
-            document.getElementById('btn_salvar_config').addEventListener('click', sendConfig)
-
+            
             const texto = document.getElementById("texto")
             const cor_fonte = document.getElementById('cor_fonte')
             const cor_fundo = document.getElementById('cor_fundo')
             const anim = document.getElementById('anim')
             const tempo_segundos = document.getElementById('tempo_segundos')
+            
+            document.getElementById('btn_salvar_config').addEventListener('click', sendConfig)
+            document.getElementById('btn_reset_config').addEventListener('click', resetConfig)
+            texto.onchange = sendConfig
+            cor_fonte.onchange = sendConfig
+            cor_fundo.onchange = sendConfig
+            tempo_segundos.onchange = sendConfig
+            
 
             // <!-- ws = new WebSocket(`ws://${window.location.host}/ws/` + {{user_name}}) -->
             ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
@@ -87,6 +94,23 @@
                     "cor_fundo": cor_fundo.value,
                     "anim": anim.value,
                     "tempo_segundos": tempo_segundos.value,
+                }
+                ws.send(JSON.stringify(data_send))
+            }
+
+            function resetConfig() {
+                texto.value = 'Exemplo'
+                cor_fonte.value = '#0000ff'
+                cor_fundo.value = '#cccccc'
+                anim.value = 'slide'
+                tempo_segundos.value = '10'
+                
+                data_send = {
+                    "texto":'Exemplo',
+                    "cor_fonte": '#0000ff',
+                    "cor_fundo": '#cccccc',
+                    "anim": 'slide',
+                    "tempo_segundos": '10',
                 }
                 ws.send(JSON.stringify(data_send))
             }
