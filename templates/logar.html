@@ -24,7 +24,7 @@
             font-size: 90vh;
             width: fit-content;
             text-transform: uppercase;
-            animation: slide {{tempo_segundos}}s linear infinite;
+            animation: slide 10s linear infinite;
         }
 
         @keyframes slide {
@@ -48,11 +48,9 @@
             var ws = null;
             const container = document.getElementById('container')
             const texto = document.getElementById("texto")
-            //<!-- ws = new WebSocket(`ws://${window.location.host}/ws/`+ {{user_name}}) -->
-            ws = new WebSocket(`ws://127.0.0.1:8000/ws/222`)
+            ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
             
             ws.onmessage = function ( { data } = event) {
-                console.log(data)
                 data = JSON.parse(data)
                 texto.innerHTML = data.texto
                 texto.style.color = data.cor_fonte

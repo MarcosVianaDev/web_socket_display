@@ -3,62 +3,60 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Path, Query, Body, 
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, JSONResponse
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from utils.templatesRender import Render
 from utils.ConnectionManager import Manager
 
-
-class User(BaseModel):
-    user_name: str
-    user_pass: str
-
 class Config(BaseModel):
-    user_pass: str = ''
     texto: str = 'Exemplo'
     cor_fonte: str = '#0000ff'
     cor_fundo: str = '#cccccc'
     anim: str = 'slide'
     tempo_segundos: str = '10'
     
-users = {}
-
 config_default = Config().model_dump()
 
 websocket_list = Manager()
 
 app = FastAPI()
 
+ORIGINS = ["*"]
+METHODS = ["*"]
+HEADERS = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=METHODS,
+    allow_headers=HEADERS,
+    # exposed_headers= HEADERS,
+)
+
 @app.get("/", response_class=HTMLResponse)
 def root():
     return HTMLResponse(content=Render('index.html'), status_code=200)
 
-@app.post('/criar')
-def criar(user: User):
-    new_config = Config()
-    new_config.user_pass = user.user_pass
-    users[user.user_name] = new_config.model_dump()
-    return JSONResponse(content=f'user {user.user_name} created', status_code=status.HTTP_201_CREATED)
-
-
-@app.get('/logar/{user_name}/edit')
+@app.get('/criar/{user_name}')
 def edit(user_name: str):
     # websocket_list.broadcast(config)
     return HTMLResponse(content=Render('criar.html', {'user_name':user_name}), status_code=200)
 
 @app.get('/logar/{user_name}')
 def logar(user_name: str):
-    return HTMLResponse(content=Render('logar.html', {'user_name':user_name, 'tempo_segundos': config_default.get('tempo_segundos')}), status_code=200)
+    return HTMLResponse(content=Render('logar.html', {'user_name':user_name}), status_code=200)
 
 @app.websocket("/ws/{user_name}")
 async def websocket_endpoint(websocket: WebSocket, user_name: str):
-    await websocket_list.connect(websocket)
+    await websocket_list.connect(websocket, user_name)
     try:
         while True:
-            data = await websocket.receive_json()
-            print(f'Dados recebidos pelo WS: {data}')
-            await websocket_list.broadcast(data)
+            data:Config = await websocket.receive_json()
+            await websocket_list.broadcast(data, user_name)
     except WebSocketDisconnect:
-        websocket_list.disconnect(websocket)
+        websocket_list.disconnect(websocket, user_name)
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, port=8000)
+    uvicorn.run(app, port=8000, host='0.0.0.0')

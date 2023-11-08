@@ -39,15 +39,15 @@
         <div>
             <label>
                 <span>Texto :</span>
-                <input type="text" id="texto" value="Digite seu texto aqui">
+                <input type="text" id="texto" value="Exemplo">
             </label>
             <label>
                 <span>cor da fonte: </span>
-                <input type="color" id="cor_fonte">
+                <input type="color" id="cor_fonte" value="#0000ff">
             </label>
             <label>
                 <span>cor do fundo: </span>
-                <input type="color" id="cor_fundo" value="#ffffff">
+                <input type="color" id="cor_fundo" value="#cccccc">
             </label>
             <label>
                 <span>Animação: </span>
@@ -78,7 +78,7 @@
             const tempo_segundos = document.getElementById('tempo_segundos')
 
             // <!-- ws = new WebSocket(`ws://${window.location.host}/ws/` + {{user_name}}) -->
-            ws = new WebSocket(`ws://127.0.0.1:8000/ws/222`)
+            ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
             
             function sendConfig() {
                 data_send = {
@@ -88,7 +88,6 @@
                     "anim": anim.value,
                     "tempo_segundos": tempo_segundos.value,
                 }
-                console.log(JSON.stringify(data_send))
                 ws.send(JSON.stringify(data_send))
             }
         })

@@ -37,10 +37,6 @@
                 <span>Nome: </span>
                 <input id="nome" type="text" required>
             </label>
-            <label>
-                <span>Senha: </span>
-                <input id="senha" type="password" required>
-            </label>
             <div>
                 <button type="button" onclick=Criar()>Criar</button>
                 <button type="button" onclick=Logar()>Logar</button>
@@ -49,45 +45,21 @@
     </div>
     <script>
         const nome = document.getElementById('nome')
-        const senha = document.getElementById('senha')
         function Logar() {
             if (nome.value == '') {
                 alert('Digite um nome')
                 nome.focus()
                 return
             }
-            console.log(nome.value)
             window.location.href = window.location.href + 'logar/' + nome.value
         }
         function Criar() {
-            if (nome.value == '' || senha.value == '') {
-                alert('Preencha todos os campos')
-                if (nome.value == '') {
-                    nome.focus()
-                    return
-                }
-                if (senha.value == '') {
-                    senha.focus()
-                }
+            if (nome.value == '') {
+                alert('Digite um nome')
+                nome.focus()
                 return
             }
-            fetch('/criar', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8'
-                },
-                body: JSON.stringify({
-                    user_name: nome.value,
-                    user_pass: senha.value
-                })
-            })
-                .then((response) => response.status)
-                .then((status) => {
-                    console.log(status)
-                    if (status == 201) {
-                        window.location.href = window.location.href + 'logar/' + nome.value + '/edit'
-                    }
-                })
+            window.location.href = window.location.href + 'criar/' + nome.value
         }
     </script>
 </body>
