@@ -40,7 +40,7 @@
 
 <body>
     <div id="container">
-        <!-- Dado carregado pelo websocket -->
+        <!-- Dado carregado pelo websocket: data = {texto: 'Exemplo', cor_fonte: '#0000ff', cor_fundo: '#cccccc', anim: 'slide', tempo_segundos: '7'} -->
         <h1 id="texto"></h1>
     </div>
     <script>
@@ -54,6 +54,7 @@
                 data = JSON.parse(data)
                 texto.innerHTML = data.texto
                 texto.style.color = data.cor_fonte
+                texto.style.animationDuration = `${data.tempo_segundos}s`
                 container.style.backgroundColor = data.cor_fundo
             }
         })
