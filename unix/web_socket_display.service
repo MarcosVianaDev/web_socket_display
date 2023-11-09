@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve WebSocketDisplay
+After=network.target
+
+[Service]
+User=USER_NAME
+Group=www-data
+WorkingDirectory=/home/USER_NAME/www/web_socket_display
+Environment="PATH=/home/USER_NAME/www/web_socket_display/venv/bin"
+ExecStart=/home/USER_NAME/www/web_socket_display/venv/bin/gunicorn main:app -k uvicorn.workers.UvicornWorker --bind unix:conn.sock --error-logfile /home/USER_NAME/www/web_socket_display/error_log.txt
+
+[Install]
+WantedBy=multi-user.target

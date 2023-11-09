@@ -1,0 +1,15 @@
+server {
+                listen  HOST_PORT;
+                server_name HOST_NAME;
+
+                #logs
+                access_log /var/log/nginx/web_socket_display.access.log;
+                error_log /var/log/nginx/web_socket_display.error.log;
+
+                location / {
+                        proxy_pass http://unix:/home/USER_NAME/www/web_socket_d>
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                }
+        }
