@@ -48,18 +48,25 @@
                 <input type="color" id="cor_fundo" value="#cccccc">
             </label>
             <label>
+                <span>Tamanho da fonte: </span>
+                <input type="range" id="tam_fonte" min="40" max="130" step="15">
+            </label>
+            <label>
                 <span>Animação: </span>
                 <select id="anim">
-                    <option value="slide" selected>slide</option>
+                    <option value="pulse" selected>Pulsar</option>
+                    <option value="blink">Piscar</option>
+                    <option value="slide">Deslizar</option>
+                    <option value="stop">Parar</option>
                 </select>
             </label>
             <label>
                 <span>tempo (segundos): </span>
-                <input type="number" id="tempo_segundos" min="1" max="60" value="10">
+                <input type="number" id="tempo_segundos" min="1" max="20" value="5">
             </label>
             <div class="d-flex justify-content-around mt-2 ">
-                <button type="button" id="btn_reset_config">Resetar</button>
-                <button type="button" id="btn_salvar_config">Salvar</button>
+                <button type="button" id="btn_reset_config" class="btn btn-outline-danger fw-bold ">Resetar</button>
+                <button type="button" id="btn_salvar_config" class="btn btn-success fw-bold ">Salvar</button>
             </div>
         </div>
     </div>
@@ -70,6 +77,7 @@
             const texto = document.getElementById("texto")
             const cor_fonte = document.getElementById('cor_fonte')
             const cor_fundo = document.getElementById('cor_fundo')
+            const tam_fonte = document.getElementById('tam_fonte')
             const anim = document.getElementById('anim')
             const tempo_segundos = document.getElementById('tempo_segundos')
             
@@ -78,6 +86,8 @@
             texto.onchange = sendConfig
             cor_fonte.onchange = sendConfig
             cor_fundo.onchange = sendConfig
+            tam_fonte.onchange = sendConfig
+            anim.onchange = sendConfig
             tempo_segundos.onchange = sendConfig
             
 
@@ -89,6 +99,7 @@
                     "texto":texto.value,
                     "cor_fonte": cor_fonte.value,
                     "cor_fundo": cor_fundo.value,
+                    "tam_fonte": tam_fonte.value,
                     "anim": anim.value,
                     "tempo_segundos": tempo_segundos.value,
                 }
@@ -99,14 +110,14 @@
                 texto.value = 'Exemplo'
                 cor_fonte.value = '#0000ff'
                 cor_fundo.value = '#cccccc'
-                anim.value = 'slide'
+                anim.value = 'pulse'
                 tempo_segundos.value = '10'
                 
                 data_send = {
                     "texto":'Exemplo',
                     "cor_fonte": '#0000ff',
                     "cor_fundo": '#cccccc',
-                    "anim": 'slide',
+                    "anim": 'pulse',
                     "tempo_segundos": '10',
                 }
                 ws.send(JSON.stringify(data_send))
