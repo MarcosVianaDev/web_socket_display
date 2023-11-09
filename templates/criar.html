@@ -15,10 +15,6 @@
         .container>div * {
             font-size: 32px;
         }
-
-        #tempo_segundos {
-            width: 2em;
-        }
         label{
             display: flex;
             flex-wrap: wrap;
@@ -61,8 +57,8 @@
                 </select>
             </label>
             <label>
-                <span>tempo (segundos): </span>
-                <input type="number" id="tempo_segundos" min="1" max="20" value="5">
+                <span>Velocidade: </span>
+                <input type="range" id="velocidade" min="1" max="20" value="15"  class="w-100">
             </label>
             <div class="d-flex justify-content-around mt-2 ">
                 <button type="button" id="btn_reset_config" class="btn btn-outline-danger fw-bold ">Resetar</button>
@@ -79,7 +75,7 @@
             const cor_fundo = document.getElementById('cor_fundo')
             const tam_fonte = document.getElementById('tam_fonte')
             const anim = document.getElementById('anim')
-            const tempo_segundos = document.getElementById('tempo_segundos')
+            const velocidade = document.getElementById('velocidade')
             
             document.getElementById('btn_salvar_config').addEventListener('click', sendConfig)
             document.getElementById('btn_reset_config').addEventListener('click', resetConfig)
@@ -88,7 +84,7 @@
             cor_fundo.onchange = sendConfig
             tam_fonte.onchange = sendConfig
             anim.onchange = sendConfig
-            tempo_segundos.onchange = sendConfig
+            velocidade.onchange = sendConfig
             
 
             // <!-- ws = new WebSocket(`ws://${window.location.host}/ws/` + {{user_name}}) -->
@@ -101,7 +97,7 @@
                     "cor_fundo": cor_fundo.value,
                     "tam_fonte": tam_fonte.value,
                     "anim": anim.value,
-                    "tempo_segundos": tempo_segundos.value,
+                    "velocidade": velocidade.value,
                 }
                 ws.send(JSON.stringify(data_send))
             }
@@ -111,14 +107,14 @@
                 cor_fonte.value = '#0000ff'
                 cor_fundo.value = '#cccccc'
                 anim.value = 'pulse'
-                tempo_segundos.value = '10'
+                velocidade.value = '15'
                 
                 data_send = {
                     "texto":'Exemplo',
                     "cor_fonte": '#0000ff',
                     "cor_fundo": '#cccccc',
                     "anim": 'pulse',
-                    "tempo_segundos": '10',
+                    "velocidade": '15',
                 }
                 ws.send(JSON.stringify(data_send))
             }

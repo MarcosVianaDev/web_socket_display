@@ -17,6 +17,7 @@
             overflow: hidden;
             display: flex;
             justify-content: center;
+            position: relative;
         }
 
         h1 {
@@ -25,13 +26,14 @@
             line-height: 100vh;
             font-size: 90vh;
             text-transform: uppercase;
+            position: absolute;
         }
     </style>
 </head>
 
 <body>
     <div id="container">
-        <!-- Dado carregado pelo websocket: data = {texto: 'Exemplo', cor_fonte: '#0000ff', cor_fundo: '#cccccc', anim: 'slide', tempo_segundos: '7'} -->
+        <!-- Dado carregado pelo websocket: data = {texto: 'Exemplo', cor_fonte: '#0000ff', cor_fundo: '#cccccc', anim: 'slide', velocidade: '7'} -->
         <h1 id="texto"></h1>
     </div>
     <script>
@@ -41,34 +43,57 @@
             const container = document.getElementById('container')
             const texto = document.getElementById("texto")
             ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
-            
-            ws.onmessage = function ( { data } = event) {
+
+            ws.onmessage = function ({ data } = event) {
                 data = JSON.parse(data)
                 container.style.backgroundColor = data.cor_fundo
                 texto.innerHTML = data.texto
                 texto.style.color = data.cor_fonte
                 texto.style.fontSize = `${data.tam_fonte}vh`
-                animate(data.anim, data.tempo_segundos, texto.style.color, container.style.backgroundColor)
+                animate(data.anim, data.velocidade, texto.style.color, container.style.backgroundColor, texto.style.fontSize)
             }
 
-            function animate(name, duration, cor1, cor2) {
+            function animate(name, duration, cor1 = '', cor2 = '', tam_fonte = '') {
+                tam_fonte = tam_fonte.replace('vh', '')
+                texto.style.right = null
                 clearInterval(animation)
-                switch(name) {
+                switch (name) {
                     case 'blink':
-                    console.log('piscando')
-                    animation = setInterval(()=>{
-                        texto.style.color = texto.style.color == cor1 ? cor2 : cor1
-                        container.style.backgroundColor = container.style.backgroundColor == cor2 ? cor1 : cor2
-                        },duration*500)
+                        animation = setInterval(() => {
+                            texto.style.color = texto.style.color == cor1 ? cor2 : cor1
+                            container.style.backgroundColor = container.style.backgroundColor == cor2 ? cor1 : cor2
+                        }, (5/duration) * 1000)
                         break
                     case 'pulse':
                         console.log('pulsando')
+                        count=1000
+                        somar=5
+                        animation = setInterval(() => {
+                            
+                            if(count > 1100 | count < 900) {
+                                somar = -somar
+                            }
+                            count = count + somar
+                            texto.style.fontSize = `${parseInt(tam_fonte)*(count/1000)}vh`
+                        },  (5/duration) * 10)
                         break
                     case 'slide':
                         console.log('deslizando')
+                        count=texto.getClientRects()[0].right
+                        somar=5
+                        animation = setInterval(() => {
+
+                            if(texto.getClientRects()[0].right < 0) {
+                                count = 0 - texto.getClientRects()[0].width
+                            }
+                            count = count + somar
+                            texto.style.right = `${count}px`
+                            console.log('right: '+texto.getClientRects()[0].right)
+                            console.log('width: '+texto.getClientRects()[0].width)
+                        },  (2/duration) * 50)
                         break
                     default:
-                        console.log(animation, 'parado')
+                        console.log('parado')
                         break
                 }
             }
