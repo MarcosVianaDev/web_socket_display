@@ -5,41 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Início</title>
+    <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css">
     <style>
         .container {
             margin: 0 auto;
             max-width: 640px;
             height: 70vh;
         }
-
-        .container,
-        form {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        form {
-            border: 1px solid black;
-            border-radius: 8px;
-            padding: 16px;
-            gap: 8px;
-        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container d-flex flex-column justify-content-center align-items-center">
         <h1>Criar ou Logar</h1>
-        <form>
+        <form class="d-flex flex-column justify-content-center align-items-center gap-2 p-3 border border-black rounded-3 ">
             <label>
                 <span>Nome: </span>
                 <input id="nome" type="text" required>
             </label>
-            <div>
-                <button type="button" onclick=Criar()>Criar</button>
-                <button type="button" onclick=Logar()>Logar</button>
+            <div class="d-flex w-75 justify-content-between ">
+                <button type="button" class="btn btn-outline-primary border-2 fw-bold" onclick=Criar()>Criar</button>
+                <button type="button" class="btn btn-outline-dark  border-2 fw-bold" onclick=Logar()>Logar</button>
             </div>
         </form>
     </div>
@@ -62,6 +48,7 @@
             window.location.href = window.location.href + 'criar/' + nome.value
         }
     </script>
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>
