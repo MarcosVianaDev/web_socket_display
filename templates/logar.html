@@ -40,17 +40,28 @@
         document.addEventListener('DOMContentLoaded', () => {
             var ws = null;
             let animation
+            let keep_alive
             const container = document.getElementById('container')
             const texto = document.getElementById("texto")
             ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
-
-            ws.onmessage = function ({ data } = event) {
+            ws.onmessage = async function ({ data } = event) {
+                clearInterval(keep_alive)
                 data = JSON.parse(data)
                 container.style.backgroundColor = data.cor_fundo
                 texto.innerHTML = data.texto
                 texto.style.color = data.cor_fonte
                 texto.style.fontSize = `${data.tam_fonte}vh`
                 animate(data.anim, data.velocidade, texto.style.color, container.style.backgroundColor, texto.style.fontSize)
+
+                keep_alive = setInterval(() => {
+                    console.log('send ping')
+                    if (ws.readyState == ws.CLOSED) {
+                        window.location.reload()
+                    }
+                    else {
+                        ws.send(JSON.stringify(data))
+                    }
+                }, 45000)
             }
 
             function animate(name, duration, cor1 = '', cor2 = '', tam_fonte = '') {
@@ -62,35 +73,32 @@
                         animation = setInterval(() => {
                             texto.style.color = texto.style.color == cor1 ? cor2 : cor1
                             container.style.backgroundColor = container.style.backgroundColor == cor2 ? cor1 : cor2
-                        }, (5/duration) * 1000)
+                        }, (5 / duration) * 1000)
                         break
                     case 'pulse':
                         console.log('pulsando')
-                        count=1000
-                        somar=5
+                        count = 1000
+                        somar = 5
                         animation = setInterval(() => {
-                            
-                            if(count > 1100 | count < 900) {
+
+                            if (count > 1100 | count < 900) {
                                 somar = -somar
                             }
                             count = count + somar
-                            texto.style.fontSize = `${parseInt(tam_fonte)*(count/1000)}vh`
-                        },  (5/duration) * 10)
+                            texto.style.fontSize = `${parseInt(tam_fonte) * (count / 1000)}vh`
+                        }, (5 / duration) * 10)
                         break
                     case 'slide':
                         console.log('deslizando')
-                        count=texto.getClientRects()[0].right
-                        somar=5
+                        count = texto.getClientRects()[0].right
+                        somar = 5
                         animation = setInterval(() => {
 
-                            if(texto.getClientRects()[0].right < 0) {
+                            if (texto.getClientRects()[0].right < 0) {
                                 count = 0 - texto.getClientRects()[0].width
                             }
                             count = count + somar
-                            texto.style.right = `${count}px`
-                            console.log('right: '+texto.getClientRects()[0].right)
-                            console.log('width: '+texto.getClientRects()[0].width)
-                        },  (2/duration) * 50)
+                        }, (2 / duration) * 50)
                         break
                     default:
                         console.log('parado')
