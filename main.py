@@ -5,8 +5,9 @@ from fastapi.responses import HTMLResponse
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils.templatesRender import Render
-from utils.ConnectionManager import Manager
+
+from utilities.templatesRender import Render
+from utilities.ConnectionManager import Manager
 
 class Config(BaseModel):
     texto: str = 'Exemplo'
