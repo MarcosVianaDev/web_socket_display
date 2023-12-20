@@ -43,7 +43,7 @@
             let keep_alive
             const container = document.getElementById('container')
             const texto = document.getElementById("texto")
-            ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
+            ws = new WebSocket(`ws${window.location.protocol = 'https:' ? 's' : ''}://${window.location.host}/ws/{{user_name}}`)
             ws.onmessage = async function ({ data } = event) {
                 clearInterval(keep_alive)
                 data = JSON.parse(data)

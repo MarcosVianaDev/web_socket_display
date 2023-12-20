@@ -91,7 +91,7 @@
 
 
             // <!-- ws = new WebSocket(`ws://${window.location.host}/ws/` + {{user_name}}) -->
-            ws = new WebSocket(`ws://${window.location.host}/ws/{{user_name}}`)
+            ws = new WebSocket(`ws${window.location.protocol = 'https:' ? 's' : ''}://${window.location.host}/ws/{{user_name}}`)
 
 
             keep_alive = setInterval(() => {
